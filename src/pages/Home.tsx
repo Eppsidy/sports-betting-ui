@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-import { getLiveMatches, Match } from './data/matches';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import '../App.css';
+import { getLiveMatches, Match } from '../data/matches';
+import { useNavigate } from 'react-router-dom';
+
 
 type Bet = {
   matchId: number;
   team: string;
 };
 
-function App() {
+function Home() {
   const isLoggedIn = !!localStorage.getItem("currentUser");
   const [matches, setMatches] = useState<Match[]>([]);
   const [bets, setBets] = useState<Bet[]>([]);
   const [stake, setStake] = useState<number>(100); 
   const [betPlaced, setBetPlaced] = useState(false);
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+  localStorage.removeItem('currentUser');
+  navigate('/login');
+};
 
  useEffect(() => {
   setMatches(getLiveMatches());
@@ -56,18 +63,6 @@ useEffect(() => {
     setBetPlaced(true);
   };
 
-  const calculateWinnings = () => {
-  let total = 0;
-  bets.forEach((bet) => {
-    const match = matches.find((m) => m.id === bet.matchId);
-    if (match) {
-      const odds = bet.team === match.teamA ? match.oddsA : match.oddsB;
-      total += 100 * odds;
-    }
-  });
-  return total.toFixed(2);
-};
-
 const calculatePayout = (stake: number): number => {
   let totalOdds = 1;
 
@@ -85,8 +80,16 @@ const calculatePayout = (stake: number): number => {
 };
 
   return (
+
     <div className="App" style={{ padding: '20px' }}>
       <h1>⚽ Live Sports Betting</h1>
+
+      <div>
+      <button onClick={handleLogout}>Logout</button>
+      
+      </div>
+  <h2>Sports Betting App</h2>
+
 
       <h2>Live Matches</h2>
       {matches.map((match) => (
@@ -102,6 +105,7 @@ const calculatePayout = (stake: number): number => {
           </button>
         </div>
       ))}
+
 
 <div className="bet-slip">
 <h2>Your Bet Slip</h2>
@@ -140,7 +144,7 @@ const calculatePayout = (stake: number): number => {
 
 
       {betPlaced && (
-        <div className="success-massage">
+        <div className="success-message">
           ✅ Your bets have been placed!
         </div>
       )}
@@ -149,4 +153,4 @@ const calculatePayout = (stake: number): number => {
   );
 }
 
-export default App;
+export default Home;
