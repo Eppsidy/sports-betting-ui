@@ -10,11 +10,13 @@ type Bet = {
 };
 
 function Home() {
+  const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
   const isLoggedIn = !!localStorage.getItem("currentUser");
   const [matches, setMatches] = useState<Match[]>([]);
   const [bets, setBets] = useState<Bet[]>([]);
   const [stake, setStake] = useState<number>(100); 
   const [betPlaced, setBetPlaced] = useState(false);
+
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -85,8 +87,8 @@ const calculatePayout = (stake: number): number => {
       <h1>⚽ Live Sports Betting</h1>
 
       <div>
-      <button onClick={handleLogout}>Logout</button>
-      
+        <p>Welcome, {user.email}</p>
+        <button onClick={handleLogout}>Logout</button>   
       </div>
   <h2>Sports Betting App</h2>
 
