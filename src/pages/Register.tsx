@@ -1,41 +1,59 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = () => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    const exists = users.find((u: any) => u.email === email);
-    if (exists) {
-      alert('User already exists');
-      return;
+  const handleRegister = async () => {
+    setError('');
+    setSuccess('');
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess('Registered successfully! Please check your email to confirm.');
+      setTimeout(() => navigate('/login'), 2000);
     }
-
-    users.push({ email, password });
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('Registered successfully!');
-    navigate('/login');
   };
 
   return (
-    <div>
-      <h2>Register</h2>
+    <div className="p-4 max-w-md mx-auto mt-20 shadow-md rounded-xl bg-white">
+      <h2 className="text-xl font-bold mb-4">Register</h2>
       <input
+        className="w-full p-2 mb-2 border rounded"
         placeholder="Email"
         value={email}
         onChange={e => setEmail(e.target.value)}
-      /><br /><br />
+      />
       <input
+        className="w-full p-2 mb-2 border rounded"
         type="password"
         placeholder="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
-      /><br /><br />
-      <button onClick={handleRegister}>Register</button>
+      />
+      {error && <p className="text-red-500 mb-2">{error}</p>}
+      {success && <p className="text-green-500 mb-2">{success}</p>}
+      <button
+        className="w-full bg-blue-500 text-white p-2 rounded"
+        onClick={handleRegister}
+      >
+        Register
+      </button>
+      <p className="text-sm mt-4 text-center">
+        Already have an account?{' '}
+        <button
+          className="text-blue-500 underline"
+          onClick={() => navigate('/login')}
+        >
+          Login
+        </button>
+      </p>
     </div>
   );
 };

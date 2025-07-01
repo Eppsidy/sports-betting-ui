@@ -1,18 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Home from './pages/Home'; // we'll rename your betting UI to this
+import AuthPage from './pages/Auth';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem('currentUser');
-
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* Optionally, redirect unknown routes */}
+          <Route path="*" element={<Navigate to="/auth" />} />
         </Routes>
       </div>
     </Router>
